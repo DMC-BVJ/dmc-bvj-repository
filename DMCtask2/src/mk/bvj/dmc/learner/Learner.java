@@ -6,4 +6,5 @@ package mk.bvj.dmc.learner;
  */
 public class Learner {
 
+	//TODO: to be implemented
 }
