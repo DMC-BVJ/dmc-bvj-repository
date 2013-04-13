@@ -5,6 +5,8 @@ package mk.bvj.dmc.model;
  */
 public class Transaction {
 
+  private int sessionId;
+  
 	private int startHour;
 	private int startWeekday;
 	private double duration;
@@ -15,8 +17,8 @@ public class Transaction {
 	private double cSumPrice;
 
 	private int bCount;
-	private double bMinCount;
-	private double bMaxCount;
+	private double bMinPrice;
+	private double bMaxPrice;
 	private double bSumPrice;
 
 	private int bStep;
@@ -32,7 +34,23 @@ public class Transaction {
 	private int address;
 	private int lastOrder;
 
+	private String order;
+	
 	/**
+   * @return the sessionId
+   */
+  public int getSessionId() {
+    return sessionId;
+  }
+
+  /**
+   * @param sessionId the sessionId to set
+   */
+  public void setSessionId(int sessionId) {
+    this.sessionId = sessionId;
+  }
+
+  /**
 	 * @return the startHour
 	 */
 	public int getStartHour() {
@@ -153,33 +171,31 @@ public class Transaction {
 	}
 
 	/**
-	 * @return the bMinCount
+	 * @return the bMinPrice
 	 */
-	public double getbMinCount() {
-		return bMinCount;
+	public double getbMinPrice() {
+		return bMinPrice;
 	}
 
 	/**
-	 * @param bMinCount
-	 *            the bMinCount to set
+	 * @param bMinPrice the bMinPrice to set
 	 */
-	public void setbMinCount(double bMinCount) {
-		this.bMinCount = bMinCount;
+	public void setbMinPrice(double bMinPrice) {
+		this.bMinPrice = bMinPrice;
 	}
 
 	/**
-	 * @return the bMaxCount
+	 * @return the bMaxPrice
 	 */
-	public double getbMaxCount() {
-		return bMaxCount;
+	public double getbMaxPrice() {
+		return bMaxPrice;
 	}
 
 	/**
-	 * @param bMaxCount
-	 *            the bMaxCount to set
+	 * @param bMaxPrice the bMaxPrice to set
 	 */
-	public void setbMaxCount(double bMaxCount) {
-		this.bMaxCount = bMaxCount;
+	public void setbMaxPrice(double bMaxPrice) {
+		this.bMaxPrice = bMaxPrice;
 	}
 
 	/**
@@ -361,5 +377,19 @@ public class Transaction {
 	public void setLastOrder(int lastOrder) {
 		this.lastOrder = lastOrder;
 	}
+
+  /**
+   * @return the order
+   */
+  public String getOrder() {
+    return order;
+  }
+
+  /**
+   * @param order the order to set
+   */
+  public void setOrder(String order) {
+    this.order = order;
+  }
 
 }
