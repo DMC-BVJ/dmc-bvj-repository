@@ -7,7 +7,7 @@ import mk.bvj.dmc.interfaces.Reviewer;
 
 /**
  * @author Boris
- *
+ * test commit
  */
 public class DMCTool implements Reviewer {
 
