@@ -1,6 +1,8 @@
 /**
  * 
  */
+
+//Komentar od Janko, tes testis
 package mk.bvj.dmc.tool;
 
 import mk.bvj.dmc.interfaces.Reviewer;
