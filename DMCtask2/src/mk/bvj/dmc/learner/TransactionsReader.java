@@ -32,6 +32,7 @@ public class TransactionsReader{
 			session.addTransaction(transaction);
 		}
 		
+		br.close();
 		return sessions;
 	}
 
