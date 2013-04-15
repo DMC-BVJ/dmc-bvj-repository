@@ -5,8 +5,8 @@ package mk.bvj.dmc.model;
  */
 public class Transaction {
 
-  private int sessionId;
-  
+	private Long sessionId;
+
 	private int startHour;
 	private int startWeekday;
 	private double duration;
@@ -35,22 +35,23 @@ public class Transaction {
 	private int lastOrder;
 
 	private String order;
-	
+
 	/**
-   * @return the sessionId
-   */
-  public int getSessionId() {
-    return sessionId;
-  }
+	 * @return the sessionId
+	 */
+	public Long getSessionId() {
+		return sessionId;
+	}
 
-  /**
-   * @param sessionId the sessionId to set
-   */
-  public void setSessionId(int sessionId) {
-    this.sessionId = sessionId;
-  }
+	/**
+	 * @param sessionId
+	 *            the sessionId to set
+	 */
+	public void setSessionId(Long sessionId) {
+		this.sessionId = sessionId;
+	}
 
-  /**
+	/**
 	 * @return the startHour
 	 */
 	public int getStartHour() {
@@ -178,7 +179,8 @@ public class Transaction {
 	}
 
 	/**
-	 * @param bMinPrice the bMinPrice to set
+	 * @param bMinPrice
+	 *            the bMinPrice to set
 	 */
 	public void setbMinPrice(double bMinPrice) {
 		this.bMinPrice = bMinPrice;
@@ -192,7 +194,8 @@ public class Transaction {
 	}
 
 	/**
-	 * @param bMaxPrice the bMaxPrice to set
+	 * @param bMaxPrice
+	 *            the bMaxPrice to set
 	 */
 	public void setbMaxPrice(double bMaxPrice) {
 		this.bMaxPrice = bMaxPrice;
@@ -378,18 +381,19 @@ public class Transaction {
 		this.lastOrder = lastOrder;
 	}
 
-  /**
-   * @return the order
-   */
-  public String getOrder() {
-    return order;
-  }
+	/**
+	 * @return the order
+	 */
+	public String getOrder() {
+		return order;
+	}
 
-  /**
-   * @param order the order to set
-   */
-  public void setOrder(String order) {
-    this.order = order;
-  }
+	/**
+	 * @param order
+	 *            the order to set
+	 */
+	public void setOrder(String order) {
+		this.order = order;
+	}
 
 }

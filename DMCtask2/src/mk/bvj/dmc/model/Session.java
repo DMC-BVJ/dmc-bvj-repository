@@ -1,5 +1,6 @@
 package mk.bvj.dmc.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,14 +8,14 @@ import java.util.List;
  */
 public class Session {
 
-	private long sessionId;
+	private Long sessionId;
 	private String order;// boolean?
 	private List<Transaction> transactions;
 
 	/**
 	 * @return the sessionId
 	 */
-	public long getSessionId() {
+	public Long getSessionId() {
 		return sessionId;
 	}
 
@@ -22,7 +23,7 @@ public class Session {
 	 * @param sessionId
 	 *            the sessionId to set
 	 */
-	public void setSessionId(int sessionId) {
+	public void setSessionId(Long sessionId) {
 		this.sessionId = sessionId;
 	}
 
@@ -55,5 +56,15 @@ public class Session {
 	public void setTransactions(List<Transaction> transactions) {
 		this.transactions = transactions;
 	}
-
+	
+	/**
+	 * Add a transaction.
+	 * @param transaction the transaction
+	 */
+	public void addTransaction(Transaction transaction) {
+		if (transactions == null) {
+			transactions = new ArrayList<Transaction>();
+		}
+		transactions.add(transaction);
+	}
 }
