@@ -1,10 +1,15 @@
 package mk.bvj.dmc.model;
 
+import java.lang.reflect.Field;
+import java.text.DecimalFormat;
+
 /**
  * Model class representing the vector used for training the classifier.
  * This model contains the features from the input and can include additional derived features.
  */
 public class VectorModel {
+  
+  private final static String DELIMITER = "|";
 
   private int sessionNo;
   
@@ -36,6 +41,103 @@ public class VectorModel {
   private int lastOrder;
   
   private int order;
+
+  /**
+   * Get the vector as string.
+   * 
+   * @param withOutcome if true, the outcome will be added to the vector 
+   * @return the vector as string
+   */
+  public String getVectorAsString(boolean withOutcome) {
+    String vector = this.toString();
+    
+    if (withOutcome) {
+      vector += DELIMITER + order;
+    }
+    
+    return vector;
+  }
+  
+  /**
+   * Ger the header for the vector.
+   * 
+   * @param withOutcome if true, the outcome column name will be added
+   * @return header for the vector
+   */
+  public String getVectorHeader(boolean withOutcome) {
+    StringBuffer s = new StringBuffer();
+    
+    Field[] fields = this.getClass().getDeclaredFields();
+    for (int i = 0; i < fields.length - 2; i++) {
+      if (fields[i].getName().equals("DELIMITER")) {
+        continue;
+      }
+      s.append(fields[i].getName());
+      s.append(DELIMITER);
+    }
+    s.append(fields[fields.length - 2].getName());
+    
+    if (withOutcome) {
+      s.append(DELIMITER);
+      s.append(fields[fields.length - 1].getName());
+    }
+    
+    return s.toString();
+  }
+  
+  @Override
+  public String toString() {
+    DecimalFormat format = new DecimalFormat("#.###");
+    StringBuffer s = new StringBuffer();
+    
+    s.append(sessionNo);
+    s.append(DELIMITER);
+    s.append(startHour);
+    s.append(DELIMITER);
+    s.append(startWeekday);
+    s.append(DELIMITER);
+    s.append(format.format(duration));
+    s.append(DELIMITER);
+    s.append(cCount);
+    s.append(DELIMITER);
+    s.append(format.format(cMinPrice));
+    s.append(DELIMITER);
+    s.append(format.format(cMaxPrice));
+    s.append(DELIMITER);
+    s.append(format.format(cSumPrice));
+    s.append(DELIMITER);
+    s.append(bCount);
+    s.append(DELIMITER);
+    s.append(format.format(bMinPrice));
+    s.append(DELIMITER);
+    s.append(format.format(bMaxPrice));
+    s.append(DELIMITER);
+    s.append(format.format(bSumPrice));
+    s.append(DELIMITER);
+    s.append(bStep);
+    s.append(DELIMITER);
+    s.append(format.format(onlineStatus));
+    s.append(DELIMITER);
+    s.append(availability);
+    s.append(DELIMITER);
+    s.append(customerId);
+    s.append(DELIMITER);
+    s.append(maxVal);
+    s.append(DELIMITER);
+    s.append(customerScore);
+    s.append(DELIMITER);
+    s.append(accountLifetime);
+    s.append(DELIMITER);
+    s.append(payments);
+    s.append(DELIMITER);
+    s.append(age);
+    s.append(DELIMITER);
+    s.append(address);
+    s.append(DELIMITER);
+    s.append(lastOrder);
+    
+    return s.toString();
+  }
 
   /**
    * @return the sessionNo
