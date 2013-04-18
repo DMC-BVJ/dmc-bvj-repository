@@ -27,9 +27,9 @@ public class VectorModel {
   private double bMaxPrice;
   private double bSumPrice;
   
-  private int bStep;
+  private int[] bStep = new int[5];
   private double onlineStatus;
-  private int availability;
+  private int[] availability = new int[7];
   
   private String customerId;
   private int maxVal;
@@ -70,6 +70,22 @@ public class VectorModel {
     Field[] fields = this.getClass().getDeclaredFields();
     for (int i = 0; i < fields.length - 2; i++) {
       if (fields[i].getName().equals("DELIMITER")) {
+        continue;
+      } else if (fields[i].getName().equals("bStep")) {
+        s.append("bStep1" + DELIMITER);
+        s.append("bStep2" + DELIMITER);
+        s.append("bStep3" + DELIMITER);
+        s.append("bStep4" + DELIMITER);
+        s.append("bStep5" + DELIMITER);
+        continue;
+      } else if (fields[i].getName().equals("availability")) {
+        s.append("availability1" + DELIMITER);
+        s.append("availability2" + DELIMITER);
+        s.append("availability3" + DELIMITER);
+        s.append("availability4" + DELIMITER);
+        s.append("availability5" + DELIMITER);
+        s.append("availability6" + DELIMITER);
+        s.append("availability7" + DELIMITER);
         continue;
       }
       s.append(fields[i].getName());
@@ -114,12 +130,25 @@ public class VectorModel {
     s.append(DELIMITER);
     s.append(format.format(bSumPrice));
     s.append(DELIMITER);
-    s.append(bStep);
+    s.append(bStep[0]);
+    s.append(DELIMITER);
+    s.append(bStep[1]);
+    s.append(DELIMITER);
+    s.append(bStep[2]);
+    s.append(DELIMITER);
+    s.append(bStep[3]);
+    s.append(DELIMITER);
+    s.append(bStep[4]);
     s.append(DELIMITER);
     s.append(format.format(onlineStatus));
     s.append(DELIMITER);
-    s.append(availability);
-    s.append(DELIMITER);
+    s.append(availability[0] + DELIMITER);
+    s.append(availability[1] + DELIMITER);
+    s.append(availability[2] + DELIMITER);
+    s.append(availability[3] + DELIMITER);
+    s.append(availability[4] + DELIMITER);
+    s.append(availability[5] + DELIMITER);
+    s.append(availability[6] + DELIMITER);
     s.append(customerId);
     s.append(DELIMITER);
     s.append(maxVal);
@@ -310,14 +339,14 @@ public class VectorModel {
   /**
    * @return the bStep
    */
-  public int getbStep() {
+  public int[] getbStep() {
     return bStep;
   }
 
   /**
    * @param bStep the bStep to set
    */
-  public void setbStep(int bStep) {
+  public void setbStep(int[] bStep) {
     this.bStep = bStep;
   }
 
@@ -338,14 +367,14 @@ public class VectorModel {
   /**
    * @return the availability
    */
-  public int getAvailability() {
+  public int[] getAvailability() {
     return availability;
   }
 
   /**
    * @param availability the availability to set
    */
-  public void setAvailability(int availability) {
+  public void setAvailability(int[] availability) {
     this.availability = availability;
   }
 

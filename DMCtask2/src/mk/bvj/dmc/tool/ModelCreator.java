@@ -222,21 +222,16 @@ public class ModelCreator {
   
   /**
    * bStep.
-   * Get the last not missing value
-   * For missing value set middle value (3)
+   * Get the number of occurrences for each value from 1 to 5
+   * No missing values
    */
-  private int getBStep(Session session) {
-    int value = 0;
+  private int[] getBStep(Session session) {
+    int[] value = new int[5];
     
     for (Transaction transaction : session.getTransactions()) {
       if (transaction.getbStep() > 0) {
-        value = transaction.getbStep();
+        value[transaction.getbStep() - 1]++;
       }
-    }
-    
-    // handle missing value
-    if (value == 0) {
-      value = 3;
     }
     
     return value;
@@ -275,30 +270,23 @@ public class ModelCreator {
    * Get the maximum value from a predefined ordering.
    * For missing value set the middle value
    */
-  private int getAvailability(Session session) {
+  private int[] getAvailability(Session session) {
     Map<String, Integer> valuesMap = new HashMap<String, Integer>();
-    valuesMap.put("completely not orderable", new Integer(1));
-    valuesMap.put("completely not determinable", new Integer(2));
-    valuesMap.put("mainly not orderable", new Integer(3));
-    valuesMap.put("mixed", new Integer(4));
-    valuesMap.put("mainly not determinable", new Integer(5));
-    valuesMap.put("mainly orderable", new Integer(6));
-    valuesMap.put("completely orderable", new Integer(7));
+    valuesMap.put("completely not orderable", new Integer(0));
+    valuesMap.put("completely not determinable", new Integer(1));
+    valuesMap.put("mainly not orderable", new Integer(2));
+    valuesMap.put("mixed", new Integer(3));
+    valuesMap.put("mainly not determinable", new Integer(4));
+    valuesMap.put("mainly orderable", new Integer(5));
+    valuesMap.put("completely orderable", new Integer(6));
     
-    int availability = 0; 
+    int[] availability = new int[7]; 
     
     for (Transaction transaction : session.getTransactions()) {
       if (!"?".equals(transaction.getAvailability()) && valuesMap.containsKey(transaction.getAvailability())) {
         int value = valuesMap.get(transaction.getAvailability());
-        if (value > availability) {
-          availability = value;
-        }
+        availability[value]++;
       }
-    }
-    
-    // handle missing values
-    if (availability == 0) {
-      availability = 4; // mixed
     }
     
     return availability;

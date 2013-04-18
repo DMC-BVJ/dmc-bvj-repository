@@ -30,7 +30,7 @@ public class ModelCreatorTest {
     assertEquals(50000, models.size());
     
     // save the models to output file 
-    String outputFileName = "C:/Users/vladimir/Desktop/DMC2013_task/vectors.txt";
+    String outputFileName = "C:/Users/vladimir/Desktop/DMC2013_task/vectors_exploded.txt";
     PrintWriter writer = new PrintWriter(outputFileName);
     
     boolean printHeader = true;
