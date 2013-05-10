@@ -225,16 +225,20 @@ public class ModelCreator {
    * Get the number of occurrences for each value from 1 to 5
    * No missing values
    */
-  private int[] getBStep(Session session) {
-    int[] value = new int[5];
+  private String getBStep(Session session) {
+    int value = -1;
     
     for (Transaction transaction : session.getTransactions()) {
-      if (transaction.getbStep() > 0) {
-        value[transaction.getbStep() - 1]++;
+      if (transaction.getbStep() > value) {
+        value = transaction.getbStep();
       }
     }
     
-    return value;
+    if (value > 0) {
+      return "bStep_" + Integer.toString(value);
+    } else {
+      return "bStep_missing";
+    }
   }
   
   /**
@@ -242,27 +246,31 @@ public class ModelCreator {
    * Get the ratio of 'y' relative to all available non missing values (Sum(all yes) / Sum(all yes + all no))
    * For missing value set 0.5
    */
-  private double getOnlineStatus(Session session) {
-    double value = 0;
-    double count = 0;
+  private String getOnlineStatus(Session session) {
+    int countYes = 0;
+    int countNo = 0;
     
     for (Transaction transaction : session.getTransactions()) {
       if (!"?".equals(transaction.getOnlineStatus())) {
-        count ++;
         if ("y".equals(transaction.getOnlineStatus())) {
-          value ++;
+          countYes++;
+        } else {
+          countNo++;
         }
       }
     }
     
     // handle missing value 
-    if (count == 0) {
-      value = 0.5d;
+    if (countYes == 0 && countNo == 0) {
+      return "online_missing";
     } else {
-      value = value / count;
+      if (countYes >= countNo) {
+        return "online_yes";
+      } else {
+        return "online_no";
+      }
     }
     
-    return value;
   }
   
   /**
@@ -270,7 +278,7 @@ public class ModelCreator {
    * Get the maximum value from a predefined ordering.
    * For missing value set the middle value
    */
-  private int[] getAvailability(Session session) {
+  private String getAvailability(Session session) {
     Map<String, Integer> valuesMap = new HashMap<String, Integer>();
     valuesMap.put("completely not orderable", new Integer(0));
     valuesMap.put("completely not determinable", new Integer(1));
@@ -280,16 +288,22 @@ public class ModelCreator {
     valuesMap.put("mainly orderable", new Integer(5));
     valuesMap.put("completely orderable", new Integer(6));
     
-    int[] availability = new int[7]; 
+    int availability = -1; 
     
     for (Transaction transaction : session.getTransactions()) {
       if (!"?".equals(transaction.getAvailability()) && valuesMap.containsKey(transaction.getAvailability())) {
         int value = valuesMap.get(transaction.getAvailability());
-        availability[value]++;
+        if (value > availability) {
+          availability = value;
+        }
       }
     }
     
-    return availability;
+    if (availability == -1) {
+      return "availability_missing";
+    } else {
+      return "availability_" + Integer.toString(availability);
+    }
   }
 
   /**
@@ -429,7 +443,7 @@ public class ModelCreator {
    * Same value everywhere, take the first encountered.
    * For missing value set 0
    */
-  private int getAddress(Session session) {
+  private String getAddress(Session session) {
     int value = -1;
     
     for (Transaction transaction : session.getTransactions()) {
@@ -441,10 +455,16 @@ public class ModelCreator {
     
     // handle missing values
     if (value < 0) {
-      value = 0;
+      return "address_missing";
+    } else {
+      if (value == 1) {
+        return "address_mr";
+      } else if (value == 2) {
+        return "address_mrs";
+      } else {
+        return "address_company";
+      }
     }
-    
-    return value;
   }
   
   /**

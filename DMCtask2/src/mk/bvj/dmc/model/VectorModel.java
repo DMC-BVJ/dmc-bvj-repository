@@ -2,6 +2,7 @@ package mk.bvj.dmc.model;
 
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 /**
  * Model class representing the vector used for training the classifier.
@@ -9,7 +10,7 @@ import java.text.DecimalFormat;
  */
 public class VectorModel {
   
-  private final static String DELIMITER = "|";
+  private final static String DELIMITER = ",";
 
   private int sessionNo;
   
@@ -27,9 +28,9 @@ public class VectorModel {
   private double bMaxPrice;
   private double bSumPrice;
   
-  private int[] bStep = new int[5];
-  private double onlineStatus;
-  private int[] availability = new int[7];
+  private String bStep;
+  private String onlineStatus;
+  private String availability;
   
   private String customerId;
   private int maxVal;
@@ -37,7 +38,7 @@ public class VectorModel {
   private int accountLifetime;
   private int payments;
   private int age;
-  private int address;
+  private String address;
   private int lastOrder;
   
   private int order;
@@ -71,22 +72,6 @@ public class VectorModel {
     for (int i = 0; i < fields.length - 2; i++) {
       if (fields[i].getName().equals("DELIMITER")) {
         continue;
-      } else if (fields[i].getName().equals("bStep")) {
-        s.append("bStep1" + DELIMITER);
-        s.append("bStep2" + DELIMITER);
-        s.append("bStep3" + DELIMITER);
-        s.append("bStep4" + DELIMITER);
-        s.append("bStep5" + DELIMITER);
-        continue;
-      } else if (fields[i].getName().equals("availability")) {
-        s.append("availability1" + DELIMITER);
-        s.append("availability2" + DELIMITER);
-        s.append("availability3" + DELIMITER);
-        s.append("availability4" + DELIMITER);
-        s.append("availability5" + DELIMITER);
-        s.append("availability6" + DELIMITER);
-        s.append("availability7" + DELIMITER);
-        continue;
       }
       s.append(fields[i].getName());
       s.append(DELIMITER);
@@ -103,7 +88,9 @@ public class VectorModel {
   
   @Override
   public String toString() {
-    DecimalFormat format = new DecimalFormat("#.###");
+    DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+    symbols.setDecimalSeparator('.');
+    DecimalFormat format = new DecimalFormat("#.###", symbols);
     StringBuffer s = new StringBuffer();
     
     s.append(sessionNo);
@@ -130,25 +117,11 @@ public class VectorModel {
     s.append(DELIMITER);
     s.append(format.format(bSumPrice));
     s.append(DELIMITER);
-    s.append(bStep[0]);
+    s.append(bStep);
     s.append(DELIMITER);
-    s.append(bStep[1]);
+    s.append(onlineStatus);
     s.append(DELIMITER);
-    s.append(bStep[2]);
-    s.append(DELIMITER);
-    s.append(bStep[3]);
-    s.append(DELIMITER);
-    s.append(bStep[4]);
-    s.append(DELIMITER);
-    s.append(format.format(onlineStatus));
-    s.append(DELIMITER);
-    s.append(availability[0] + DELIMITER);
-    s.append(availability[1] + DELIMITER);
-    s.append(availability[2] + DELIMITER);
-    s.append(availability[3] + DELIMITER);
-    s.append(availability[4] + DELIMITER);
-    s.append(availability[5] + DELIMITER);
-    s.append(availability[6] + DELIMITER);
+    s.append(availability + DELIMITER);
     s.append(customerId);
     s.append(DELIMITER);
     s.append(maxVal);
@@ -339,42 +312,42 @@ public class VectorModel {
   /**
    * @return the bStep
    */
-  public int[] getbStep() {
+  public String getbStep() {
     return bStep;
   }
 
   /**
    * @param bStep the bStep to set
    */
-  public void setbStep(int[] bStep) {
+  public void setbStep(String bStep) {
     this.bStep = bStep;
   }
 
   /**
    * @return the onlineStatus
    */
-  public double getOnlineStatus() {
+  public String getOnlineStatus() {
     return onlineStatus;
   }
 
   /**
    * @param onlineStatus the onlineStatus to set
    */
-  public void setOnlineStatus(double onlineStatus) {
+  public void setOnlineStatus(String onlineStatus) {
     this.onlineStatus = onlineStatus;
   }
 
   /**
    * @return the availability
    */
-  public int[] getAvailability() {
+  public String getAvailability() {
     return availability;
   }
 
   /**
    * @param availability the availability to set
    */
-  public void setAvailability(int[] availability) {
+  public void setAvailability(String availability) {
     this.availability = availability;
   }
 
@@ -465,14 +438,14 @@ public class VectorModel {
   /**
    * @return the address
    */
-  public int getAddress() {
+  public String getAddress() {
     return address;
   }
 
   /**
    * @param address the address to set
    */
-  public void setAddress(int address) {
+  public void setAddress(String address) {
     this.address = address;
   }
 

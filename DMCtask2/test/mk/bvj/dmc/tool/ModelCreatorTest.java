@@ -1,7 +1,5 @@
 package mk.bvj.dmc.tool;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
@@ -12,6 +10,8 @@ import mk.bvj.dmc.model.VectorModel;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * Test the creation of vector models.
  */
@@ -21,7 +21,7 @@ public class ModelCreatorTest {
   public void testModelCreation() throws IOException {
     // create sessions first
     TransactionsReader reader = new TransactionsReader();
-    String fileName = "C:/Users/vladimir/Desktop/DMC2013_task/transact_train.txt";
+    String fileName = "C:/Users/varsov/Desktop/DMC2013_task/transact_train.txt";
     Map<Long, Session> sessions = reader.run(fileName);
     
     // run the model creator 
@@ -30,7 +30,7 @@ public class ModelCreatorTest {
     assertEquals(50000, models.size());
     
     // save the models to output file 
-    String outputFileName = "C:/Users/vladimir/Desktop/DMC2013_task/vectors_exploded.txt";
+    String outputFileName = "C:/Users/varsov/Desktop/DMC2013_task/vectors_20130510.txt";
     PrintWriter writer = new PrintWriter(outputFileName);
     
     boolean printHeader = true;
