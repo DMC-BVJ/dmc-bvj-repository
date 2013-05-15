@@ -21,27 +21,29 @@ public class ModelCreatorTest {
   public void testModelCreation() throws IOException {
     // create sessions first
     TransactionsReader reader = new TransactionsReader();
-    String fileName = "C:/Users/varsov/Desktop/DMC2013_task/transact_train.txt";
+    String fileName = "C:/Users/vladimir/Desktop/DMC2013_task/transact_class.txt";
     Map<Long, Session> sessions = reader.run(fileName);
     
     // run the model creator 
     ModelCreator modelCreator = new ModelCreator();
-    Map<Long, VectorModel> models = modelCreator.createVectorModels(sessions);
-    assertEquals(50000, models.size());
+    Map<Long, VectorModel> models = modelCreator.createVectorModels(sessions, true);
+    assertEquals(5111, models.size());
     
     // save the models to output file 
-    String outputFileName = "C:/Users/varsov/Desktop/DMC2013_task/vectors_20130510.txt";
+    String outputFileName = "C:/Users/vladimir/Desktop/DMC2013_task/vectors_toclassify_unreg_nomissing.txt";
     PrintWriter writer = new PrintWriter(outputFileName);
     
     boolean printHeader = true;
     for (Map.Entry<Long, VectorModel> entry : models.entrySet()) {
       VectorModel vector = entry.getValue();
       if (printHeader) {
-        writer.println(vector.getVectorHeader(true));
+        writer.println(vector.getVectorHeader(false));
         printHeader = false;
       }
       
-      writer.println(vector.getVectorAsString(true));
+      if (!vector.isRegistered()) {
+        writer.println(vector.getVectorAsString(false));
+      }
     }
     writer.flush();
     writer.close();
