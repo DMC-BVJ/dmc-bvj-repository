@@ -3,14 +3,76 @@ package mk.bvj.dmc.model;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Model class representing the vector used for training the classifier.
  * This model contains the features from the input and can include additional derived features.
  */
 public class VectorModel {
+
+  private static Map<String, Double> minValuesRegistered = new HashMap<String, Double>();
+  private static Map<String, Double> maxValuesRegistered = new HashMap<String, Double>();
+  
+  private static Map<String, Double> minValuesUnregistered = new HashMap<String, Double>();
+  private static Map<String, Double> maxValuesUnregistered = new HashMap<String, Double>();
+  static {
+    minValuesRegistered.put("duration", new Double(0));
+    maxValuesRegistered.put("duration", new Double(21553.323));
+    minValuesRegistered.put("cCount", new Double(0));
+    maxValuesRegistered.put("cCount", new Double(200));
+    minValuesRegistered.put("cMinPrice", new Double(0));
+    maxValuesRegistered.put("cMinPrice", new Double(2799.99));
+    minValuesRegistered.put("cMaxPrice", new Double(0));
+    maxValuesRegistered.put("cMaxPrice", new Double(6999.99));
+    minValuesRegistered.put("cSumPrice", new Double(0));
+    maxValuesRegistered.put("cSumPrice", new Double(76239.34));
+    minValuesRegistered.put("bCount", new Double(0));
+    maxValuesRegistered.put("bCount", new Double(108));
+    minValuesRegistered.put("bMinPrice", new Double(0));
+    maxValuesRegistered.put("bMinPrice", new Double(6999.99));
+    minValuesRegistered.put("bMaxPrice", new Double(0));
+    maxValuesRegistered.put("bMaxPrice", new Double(6999.99));
+    minValuesRegistered.put("bSumPrice", new Double(0));
+    maxValuesRegistered.put("bSumPrice", new Double(10429.83));
+    minValuesRegistered.put("maxValue", new Double(0));
+    maxValuesRegistered.put("maxValue", new Double(50000));
+    minValuesRegistered.put("customerScore", new Double(0));
+    maxValuesRegistered.put("customerScore", new Double(638));
+    minValuesRegistered.put("accountLifetime", new Double(0));
+    maxValuesRegistered.put("accountLifetime", new Double(600));
+    minValuesRegistered.put("payments", new Double(0));
+    maxValuesRegistered.put("payments", new Double(868));
+    minValuesRegistered.put("age", new Double(0));
+    maxValuesRegistered.put("age", new Double(99));
+    minValuesRegistered.put("lastOrder", new Double(0));
+    maxValuesRegistered.put("lastOrder", new Double(738));
+    
+    minValuesUnregistered.put("duration", new Double(0));
+    maxValuesUnregistered.put("duration", new Double(21580.092));
+    minValuesUnregistered.put("cCount", new Double(0));
+    maxValuesUnregistered.put("cCount", new Double(200));
+    minValuesUnregistered.put("cMinPrice", new Double(0));
+    maxValuesUnregistered.put("cMinPrice", new Double(5999.99));
+    minValuesUnregistered.put("cMaxPrice", new Double(0));
+    maxValuesUnregistered.put("cMaxPrice", new Double(5999.99));
+    minValuesUnregistered.put("cSumPrice", new Double(0));
+    maxValuesUnregistered.put("cSumPrice", new Double(115742));
+    minValuesUnregistered.put("bCount", new Double(0));
+    maxValuesUnregistered.put("bCount", new Double(62));
+    minValuesUnregistered.put("bMinPrice", new Double(0));
+    maxValuesUnregistered.put("bMinPrice", new Double(5999.99));
+    minValuesUnregistered.put("bMaxPrice", new Double(0));
+    maxValuesUnregistered.put("bMaxPrice", new Double(5999.99));
+    minValuesUnregistered.put("bSumPrice", new Double(0));
+    maxValuesUnregistered.put("bSumPrice", new Double(23116.88));
+  }
   
   private final static String DELIMITER = ",";
+  private boolean registered = false;
 
   private int sessionNo;
   
@@ -60,7 +122,98 @@ public class VectorModel {
   }
   
   /**
-   * Ger the header for the vector.
+   * Get the vector as array with values.
+   * 
+   * @param withOutcome if true, the outcome will be added to the vector 
+   * @return the vector as string
+   */
+  public double[] getVectorAsValueArray(boolean withOutcome, boolean normalized) {
+    List<Double> vectorValues = new ArrayList<Double>();
+    
+    vectorValues.add(normalizeValue("duration", duration, normalized));
+    vectorValues.add(normalizeValue("cCount", cCount, normalized));
+    vectorValues.add(normalizeValue("cMinPrice", cMinPrice, normalized));
+    vectorValues.add(normalizeValue("cMaxPrice", cMaxPrice, normalized));
+    vectorValues.add(normalizeValue("cSumPrice", cSumPrice, normalized));
+    vectorValues.add(normalizeValue("bCount", bCount, normalized));
+    vectorValues.add(normalizeValue("bMinPrice", bMinPrice, normalized));
+    vectorValues.add(normalizeValue("bMaxPrice", bMaxPrice, normalized));
+    vectorValues.add(normalizeValue("bSumPrice", bSumPrice, normalized));
+    
+    // bstep
+    vectorValues.add("bStep_missing".equals(bStep) ? new Double(1) : new Double(0));
+    vectorValues.add("bStep_1".equals(bStep) ? new Double(1) : new Double(0));
+    vectorValues.add("bStep_2".equals(bStep) ? new Double(1) : new Double(0));
+    vectorValues.add("bStep_3".equals(bStep) ? new Double(1) : new Double(0));
+    vectorValues.add("bStep_4".equals(bStep) ? new Double(1) : new Double(0));
+    vectorValues.add("bStep_5".equals(bStep) ? new Double(1) : new Double(0));
+    
+    // online status
+    vectorValues.add("online_missing".equals(onlineStatus) ? new Double(1) : new Double(0));
+    vectorValues.add("online_yes".equals(onlineStatus) ? new Double(1) : new Double(0));
+    vectorValues.add("online_no".equals(onlineStatus) ? new Double(1) : new Double(0));
+
+    if (registered) {
+      vectorValues.add(normalizeValue("maxValue", maxVal, normalized));
+      vectorValues.add(normalizeValue("customerScore", customerScore, normalized));
+      vectorValues.add(normalizeValue("accountLifetime", accountLifetime, normalized));
+      vectorValues.add(normalizeValue("payments", payments, normalized));
+      vectorValues.add(normalizeValue("age", age, normalized));
+    
+      // address
+      vectorValues.add("address_mr".equals(address) ? new Double(1) : new Double(0));
+      vectorValues.add("address_mrs".equals(address) ? new Double(1) : new Double(0));
+      vectorValues.add("address_company".equals(address) ? new Double(1) : new Double(0));
+      vectorValues.add(normalizeValue("lastOrder", lastOrder, normalized));
+    }
+  
+    if (withOutcome) {
+      vectorValues.add(new Double(order));
+    }
+    
+    double[] result = new double[vectorValues.size()];
+    int i = 0;
+    for (Double value : vectorValues) {
+      result[i++] = value.doubleValue();
+    }
+    return result;
+  }
+  
+  private Double normalizeValue(String name, double value, boolean normalized) {
+    if (!normalized) {
+      return value;
+    }
+    
+    double minValue = 0;
+    double maxValue = 0;
+    if (registered) {
+      if (minValuesRegistered.containsKey(name)) {
+        minValue = minValuesRegistered.get(name);
+      }
+      if (maxValuesRegistered.containsKey(name)) {
+        maxValue = maxValuesRegistered.get(name);
+      }
+    } else {
+      if (minValuesUnregistered.containsKey(name)) {
+        minValue = minValuesRegistered.get(name);
+      }
+      if (maxValuesUnregistered.containsKey(name)) {
+        maxValue = maxValuesRegistered.get(name);
+      }
+    }
+    
+    double normalizedValue = (value - minValue) / (maxValue - minValue);
+    if (normalizedValue < 0) {
+      normalizedValue = 0;
+    } else if (normalizedValue > 1) {
+      normalizedValue = 1;
+    }
+    
+    return new Double(normalizedValue);
+  }
+  
+  /**
+   * Get the header for the vector.
    * 
    * @param withOutcome if true, the outcome column name will be added
    * @return header for the vector
@@ -70,9 +223,13 @@ public class VectorModel {
     
     Field[] fields = this.getClass().getDeclaredFields();
     for (int i = 0; i < fields.length - 2; i++) {
-      if (fields[i].getName().equals("DELIMITER")) {
+      if (fields[i].getName().equals("DELIMITER") ||
+          fields[i].getName().equals("registered") ||
+          fields[i].getName().equals("minValues") ||
+          fields[i].getName().equals("maxValues")) {
         continue;
       }
+      
       s.append(fields[i].getName());
       s.append(DELIMITER);
     }
@@ -475,6 +632,20 @@ public class VectorModel {
    */
   public void setOrder(int order) {
     this.order = order;
+  }
+
+  /**
+   * @return the registered
+   */
+  public boolean isRegistered() {
+    return registered;
+  }
+
+  /**
+   * @param registered the registered to set
+   */
+  public void setRegistered(boolean registered) {
+    this.registered = registered;
   }
   
 }

@@ -13,8 +13,11 @@ import mk.bvj.dmc.model.VectorModel;
  */
 public class ModelCreator {
 
-  public Map<Long, VectorModel> createVectorModels(Map<Long, Session> sessions) {
+  private boolean generateMissingValues = true;
+  
+  public Map<Long, VectorModel> createVectorModels(Map<Long, Session> sessions, boolean generateMIssingValues) {
     
+    this.generateMissingValues = generateMIssingValues;
     Map<Long, VectorModel> models = new HashMap<Long, VectorModel>();
     
     // for each session create a vector model
@@ -46,7 +49,7 @@ public class ModelCreator {
       vector.setOnlineStatus(getOnlineStatus(session));
       vector.setAvailability(getAvailability(session));
       
-      vector.setCustomerId(getCustomerId(session));
+      vector.setCustomerId(getCustomerId(session, vector));
       vector.setMaxVal(getMaxVal(session));
       vector.setCustomerScore(getCustomerScore(session));
       vector.setAccountLifetime(getAccountLifetime(session));
@@ -55,10 +58,14 @@ public class ModelCreator {
       vector.setAddress(getAddress(session));
       vector.setLastOrder(getLastOrder(session));
       
-      if ("y".equals(session.getTransactions().get(0).getOrder())) {
-        vector.setOrder(1);
+      if ("".equals(session.getOrder())) {
+        vector.setOrder(-1);
       } else {
-        vector.setOrder(0);
+        if ("y".equals(session.getOrder())) {
+          vector.setOrder(1);
+        } else {
+          vector.setOrder(0);
+        }
       }
       
       models.put(entry.getKey(), vector);
@@ -98,8 +105,10 @@ public class ModelCreator {
     }
     
     // handle missing value
-    if (minPrice < 0) {
-      minPrice = 0;
+    if (generateMissingValues) {
+      if (minPrice < 0) {
+        minPrice = 0;
+      }
     }
     
     return minPrice;
@@ -120,8 +129,10 @@ public class ModelCreator {
     }
     
     // handle missing value
-    if (maxPrice < 0) {
-      maxPrice = 0;
+    if (generateMissingValues) {
+      if (maxPrice < 0) {
+        maxPrice = 0;
+      }
     }
     
     return maxPrice;
@@ -142,8 +153,10 @@ public class ModelCreator {
     }
     
     // handle missing value
-    if (sumPrice < 0) {
-      sumPrice = 0;
+    if (generateMissingValues) {
+      if (sumPrice < 0) {
+        sumPrice = 0;
+      }
     }
     
     return sumPrice;
@@ -169,8 +182,10 @@ public class ModelCreator {
     }
     
     // handle missing value
-    if (minPrice < 0) {
-      minPrice = 0;
+    if (generateMissingValues) {
+      if (minPrice < 0) {
+        minPrice = 0;
+      }
     }
     
     return minPrice;
@@ -191,8 +206,10 @@ public class ModelCreator {
     }
     
     // handle missing value
-    if (maxPrice < 0) {
-      maxPrice = 0;
+    if (generateMissingValues) {
+      if (maxPrice < 0) {
+        maxPrice = 0;
+      }
     }
     
     return maxPrice;
@@ -213,8 +230,10 @@ public class ModelCreator {
     }
     
     // handle missing value
-    if (sumPrice < 0) {
-      sumPrice = 0;
+    if (generateMissingValues) {
+      if (sumPrice < 0) {
+        sumPrice = 0;
+      }
     }
     
     return sumPrice;
@@ -235,10 +254,15 @@ public class ModelCreator {
     }
     
     if (value > 0) {
-      return "bStep_" + Integer.toString(value);
+      return Integer.toString(value);
     } else {
-      return "bStep_missing";
+      return "3";
     }
+//    if (value > 0) {
+//      return "bStep_" + Integer.toString(value);
+//    } else {
+//      return "bStep_missing";
+//    }
   }
   
   /**
@@ -260,16 +284,25 @@ public class ModelCreator {
       }
     }
     
-    // handle missing value 
     if (countYes == 0 && countNo == 0) {
-      return "online_missing";
+      return "0.5";
     } else {
       if (countYes >= countNo) {
-        return "online_yes";
+        return "1";
       } else {
-        return "online_no";
+        return "0";
       }
     }
+    // handle missing value 
+//    if (countYes == 0 && countNo == 0) {
+//      return "online_missing";
+//    } else {
+//      if (countYes >= countNo) {
+//        return "online_yes";
+//      } else {
+//        return "online_no";
+//      }
+//    }
     
   }
   
@@ -300,10 +333,15 @@ public class ModelCreator {
     }
     
     if (availability == -1) {
-      return "availability_missing";
+      return "3";
     } else {
-      return "availability_" + Integer.toString(availability);
+      return Integer.toString(availability);
     }
+//    if (availability == -1) {
+//      return "availability_missing";
+//    } else {
+//      return "availability_" + Integer.toString(availability);
+//    }
   }
 
   /**
@@ -311,14 +349,23 @@ public class ModelCreator {
    * Same value everywhere, take the first encountered.
    * For missing value set 0 as string
    */
-  private String getCustomerId(Session session) {
-    String customerId = "0";
+  private String getCustomerId(Session session, VectorModel vector) {
+    String customerId = "?";
     
     for (Transaction transaction : session.getTransactions()) {
       if (!"?".equals(transaction.getCustomerId())) {
         customerId = transaction.getCustomerId();
         break;
       }
+    }
+    
+    if ("?".equals(customerId)) {
+      vector.setRegistered(false);
+      if (generateMissingValues) {
+        customerId = "0";
+      }
+    } else {
+      vector.setRegistered(true);
     }
     
     return customerId;
@@ -340,8 +387,10 @@ public class ModelCreator {
     }
     
     // handle missing values
-    if (value < 0) {
-      value = 50000;
+    if (generateMissingValues) {
+      if (value < 0) {
+        value = 50000;
+      }
     }
     
     return value;
@@ -363,8 +412,10 @@ public class ModelCreator {
     }
     
     // handle missing values
-    if (value < 0) {
-      value = 0;
+    if (generateMissingValues) {
+      if (value < 0) {
+        value = 0;
+      }
     }
     
     return value;
@@ -386,8 +437,10 @@ public class ModelCreator {
     }
     
     // handle missing values
-    if (value < 0) {
-      value = 0;
+    if (generateMissingValues) {
+      if (value < 0) {
+        value = 0;
+      }
     }
     
     return value;
@@ -409,8 +462,10 @@ public class ModelCreator {
     }
     
     // handle missing values
-    if (value < 0) {
-      value = 0;
+    if (generateMissingValues) {
+      if (value < 0) {
+        value = 0;
+      }
     }
     
     return value;
@@ -431,8 +486,10 @@ public class ModelCreator {
     }
     
     // handle missing values
-    if (value < 0) {
-      value = 0;
+    if (generateMissingValues) {
+      if (value < 0) {
+        value = 0;
+      }
     }
     
     return value;
@@ -483,8 +540,10 @@ public class ModelCreator {
     }
     
     // handle missing values
-    if (value < 0) {
-      value = 0;
+    if (generateMissingValues) {
+      if (value < 0) {
+        value = 0;
+      }
     }
     
     return value;

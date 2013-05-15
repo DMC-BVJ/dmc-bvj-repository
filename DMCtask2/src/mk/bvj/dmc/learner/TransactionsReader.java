@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +37,32 @@ public class TransactionsReader{
 		
 		br.close();
 		return sessions;
+	}
+	
+	/**
+	 * Read all the sessions from the given input stream.
+	 * @return map of parsed sessions.
+	 * @throws IOException IOException
+	 */
+	public Map<Long, Session> readSessions(Reader reader) throws IOException {
+	  Map<Long, Session> sessions = new HashMap<Long, Session>();
+    
+    BufferedReader br = new BufferedReader(reader);
+    String line = null;
+    while((line = br.readLine()) != null){
+      Transaction transaction = parseTransaction(line);
+      Session session = sessions.get(transaction.getSessionId()); 
+      if (session == null) {
+        session = new Session();
+        session.setSessionId(transaction.getSessionId());
+        session.setOrder(transaction.getOrder());
+        sessions.put(session.getSessionId(), session);
+      }
+      session.addTransaction(transaction);
+    }
+    
+    br.close();
+    return sessions;
 	}
 
 	private Transaction parseTransaction(String line) {
@@ -76,9 +105,14 @@ public class TransactionsReader{
 		transaction.setAddress(address);
 		Integer lastOrder = vals[22].trim().equals("?") ? -1 : Integer.valueOf(vals[22].trim());
 		transaction.setLastOrder(lastOrder);
-		String order = vals[23].trim();
-		assert(order.equalsIgnoreCase("y") || order.equalsIgnoreCase("n"));
-		transaction.setOrder(order);
+		
+		if (vals.length == 24) {
+  		String order = vals[23].trim();
+  		assert(order.equalsIgnoreCase("y") || order.equalsIgnoreCase("n"));
+  		transaction.setOrder(order);
+		} else {
+		  transaction.setOrder("");
+		}
 		
 		return transaction;
 	}
